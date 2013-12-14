@@ -68,7 +68,7 @@ public class Console : MonoBehaviour {
 
 		if( inp == "look")
 		{
-			response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions() + "\n" + rm.currentRoom.GetItemsInRoom();
+			response = rm.currentRoom.longDesc + "\n" + rm.currentRoom.GetExitOptions() + "\n" + rm.currentRoom.GetItemsInRoom();
 		} else if( inp == "north" || inp == "south" || inp == "east" || inp == "west" || inp == "up" || inp == "down")
 		{
 			// user is trying to move rooms; first check if its a valid exit for the current room

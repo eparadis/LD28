@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 
 public class Room {
-	public string description;
+	public string description, longDesc;
 	public List<string> items, hiddenItems;
 	public Dictionary<string,Room> exits;
-	public Room( string d) { 
+	public Room( string d, string ld) { 
 		description = d;
+		longDesc = ld;
 		items = new List<string>();
 		hiddenItems = new List<string>();
 		exits = new Dictionary<string,Room>();
@@ -54,9 +55,9 @@ public class RoomManager : MonoBehaviour {
 	// just some statically defined room data
 	void PopulateTestRooms()
 	{
-		Room first = new Room( "You are in the entrance of a tunnel");
-		Room second = new Room( "You are in the depths of a tunnel");
-		Room third = new Room( "You have escaped the tunnel!");
+		Room first = new Room( "You are in the entrance of a tunnel", "Vines have nearly overgrown the entrance to a tunnel.  The harsh sun overhead prevents you from seeing more than a few feet inside.");
+		Room second = new Room( "You are in the depths of a tunnel", "The air feels damp and smells musty.  You get the feeling that no living thing has been this way in many years.");
+		Room third = new Room( "You have escaped the tunnel!", "You step blinking into the bright sunlight of the surface.  You are free!");
 
 		first.exits.Add ("north", second);
 		second.exits.Add ("south", first);
