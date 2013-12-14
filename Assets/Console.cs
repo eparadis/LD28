@@ -25,7 +25,7 @@ public class Console : MonoBehaviour {
 			} else {
 				if (c == "\n"[0] || c == "\r"[0])
 				{
-					AddLineToBuffer(inputText.text);
+					ParseCommand(inputText.text);
 					inputText.text = "";
 				}
 				else
@@ -48,6 +48,24 @@ public class Console : MonoBehaviour {
 			concat += s + "\n";
 		}
 		guiText.text = concat;
+	}
+
+	void ParseCommand( string inp)
+	{
+		string response;
+
+		if( inp == "look")
+		{
+			response = "You are in an empty game.";
+		} else {
+			response = "What?";
+		}
+
+		// add what the user entered as a 'command'
+		AddLineToBuffer( "> " + inp);
+		// then add our response
+		AddLineToBuffer(response);
+
 	}
 
 }
