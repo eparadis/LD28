@@ -21,6 +21,21 @@ public class Room {
 		}
 		return resp;
 	}
+	public string GetItemsInRoom()
+	{
+		if( items.Count == 0 )
+			return "";
+		else if( items.Count == 1 )
+			return "There is a " + items[0] + " here.";
+		else {
+			string resp = "In this room, there are: ";
+			foreach( string s in items)
+			{
+				resp += s + " ";
+			}
+			return resp;
+		}
+	}
 };
 
 public class RoomManager : MonoBehaviour {
