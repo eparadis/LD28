@@ -5,11 +5,12 @@ using System.Collections.Generic;
 
 public class Room {
 	public string description;
-	public List<string> items;
+	public List<string> items, hiddenItems;
 	public Dictionary<string,Room> exits;
 	public Room( string d) { 
 		description = d;
 		items = new List<string>();
+		hiddenItems = new List<string>();
 		exits = new Dictionary<string,Room>();
 	}
 	public string GetExitOptions()
@@ -63,6 +64,7 @@ public class RoomManager : MonoBehaviour {
 		second.exits.Add ("north", third);
 		third.exits.Add ("south", second);
 
+		first.hiddenItems.Add ("magic sword");
 		second.items.Add ("heavy rock");
 
 		rooms = new List<Room>();

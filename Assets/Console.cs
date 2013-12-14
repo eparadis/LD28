@@ -80,6 +80,20 @@ public class Console : MonoBehaviour {
 			} else {
 				response = "You cannot travel that direction from here!";
 			}
+		} else if( inp == "search")
+		{
+			if(true)//Random.value < 0.5f) // 50%
+			{
+				if( rm.currentRoom.hiddenItems.Count > 0)
+				{
+					string itemFound = rm.currentRoom.hiddenItems[0];
+					response = "You find a " + itemFound;
+					rm.currentRoom.items.Add(itemFound);
+					rm.currentRoom.hiddenItems.Remove(itemFound);
+				} else
+					response = "There doesn't seem to be anything else hidden in this room.";
+			} else
+				response = "You didn't find anything this time.";
 		} else {
 			response = "What?";
 		}
