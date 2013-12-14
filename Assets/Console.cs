@@ -69,10 +69,17 @@ public class Console : MonoBehaviour {
 		if( inp == "look")
 		{
 			response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
-		} else if( inp == "north" && rm.currentRoom.exits.ContainsKey("north") )
+		} else if( inp == "north" || inp == "south" || inp == "east" || inp == "west" || inp == "up" || inp == "down")
 		{
-			rm.currentRoom = rm.currentRoom.exits["north"];
-			response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
+			// user is trying to move rooms; first check if its a valid exit for the current room
+			if(rm.currentRoom.exits.ContainsKey(inp))
+			{
+				// travel there and print what it looks like
+				rm.currentRoom = rm.currentRoom.exits[inp];
+				response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
+			} else {
+				response = "You cannot travel that direction from here!";
+			}
 		} else {
 			response = "What?";
 		}
