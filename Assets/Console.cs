@@ -8,6 +8,7 @@ public class Console : MonoBehaviour {
 	public int maxBufferLength;
 	Queue<string> scrollBuffer;
 	bool clearCursor = true;
+	RoomManager rm;
 
 	// Use this for initialization
 	void Start () {
@@ -15,6 +16,8 @@ public class Console : MonoBehaviour {
 		AddLineToBuffer("'You Only Have One'");
 		AddLineToBuffer("LD24 Entry, (c) 2013 Ed Paradis");
 		inputText.text = "_";
+		rm = GetComponent<RoomManager>();
+		AddLineToBuffer(rm.currentRoom.description);
 	}
 	
 	void Update() {
@@ -65,7 +68,11 @@ public class Console : MonoBehaviour {
 
 		if( inp == "look")
 		{
-			response = "You are in an empty game.";
+			response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
+		} else if( inp == "north" && rm.currentRoom.exits.ContainsKey("north") )
+		{
+			rm.currentRoom = rm.currentRoom.exits["north"];
+			response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
 		} else {
 			response = "What?";
 		}
