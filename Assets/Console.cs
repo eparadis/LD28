@@ -105,6 +105,7 @@ public class Console : MonoBehaviour {
 	void ParseCommand( string inp)
 	{
 		string response;
+		string firstWord = inp.Split(' ')[0];
 
 		if( inp == "look")
 		{
@@ -134,6 +135,16 @@ public class Console : MonoBehaviour {
 					response = "There doesn't seem to be anything else hidden in this room.";
 			} else
 				response = "You didn't find anything this time.";
+		} else if( firstWord == "get")
+		{
+			string attemptedItem = inp.Substring( firstWord.Length + 1);
+			if( rm.currentRoom.items.Contains(attemptedItem))
+			{
+				rm.currentRoom.items.Remove(attemptedItem);
+				response = "You picked up the " + attemptedItem + ", but it immediately turned to dust because there is no inventory system yet!";
+			} else {
+				response = "There is no " + attemptedItem + " in this room.";
+			}
 		} else {
 			response = "What?";
 		}
