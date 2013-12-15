@@ -96,7 +96,7 @@ public class RoomManager : MonoBehaviour {
 		Room third = new Room( "You have escaped the tunnel!", "You step blinking into the bright sunlight of the surface.  You are free!");
 		PuzzleRoom fourth = new PuzzleRoom( "This room has a locked door.", "An enormous iron door emblazoned with a skull dominates this room.  There is a keyhole in the center of the door you can just reach.", "skull key");
 		Room fifth = new Room( "You are at a dead end.", "This appears to be an empty room, but you wonder why would it be behind a locked door.");
-		PuzzleRoom sixth = new PuzzleRoom( "This room has a strange pedistal in the center.", "An ornate pedistal rises from the center of the room.  A single ray of light from somewhere in the ceiling shines onto the pedistal, illuminating a small bowl at the top.", "diamond ring");
+		PuzzleRoom sixth = new PuzzleRoom( "This room has a strange pedestal in the center.", "An ornate pedestal rises from the center of the room.  A single ray of light from somewhere in the ceiling shines onto the pedistal, illuminating a small bowl at the top.", "diamond ring");
 
 		first.exits.Add ("north", second);
 		second.exits.Add ("south", first);
