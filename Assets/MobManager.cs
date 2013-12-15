@@ -25,4 +25,8 @@ public class MobManager : MonoBehaviour {
 	{
 		return new Mob();
 	}
+
+	public void MobActions()
+	{
+	}
 }
