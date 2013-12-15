@@ -15,4 +15,6 @@ Temp/
 #OS X stuff
 .DS_Store
 
+# don't store the builds
+Builds
 
