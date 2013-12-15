@@ -11,7 +11,13 @@ public class MobManager : MonoBehaviour {
 
 	List<Mob> mobs;
 
-	public void PopulateTestMobs()
+	public void PopulateMobs()
+	{
+		mobs = new List<Mob>();
+		// nothing for now, but mobs has to be defined
+	}
+
+	void PopulateTestMobs()
 	{
 		mobs = new List<Mob>();
 

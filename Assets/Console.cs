@@ -22,8 +22,8 @@ public class Console : MonoBehaviour {
 		mm = GetComponent<MobManager>();
 		im = GetComponent<InventoryManager>();
 
-		mm.PopulateTestMobs();	// populate mobs first, because the test rooms look for them to stick them in the right rooms ...
-		rm.PopulateTestRooms();
+		mm.PopulateMobs();	// populate mobs first, because the test rooms look for them to stick them in the right rooms ...
+		rm.PopulateRooms();
 		AddLineToBuffer(rm.currentRoom.description);
 
 		//AddLineToBuffer("123456789 123456789 123456789 1234567890");
@@ -147,7 +147,7 @@ public class Console : MonoBehaviour {
 				rm.currentRoom = rm.currentRoom.exits[inp];
 				if( rm.currentRoom == rm.lastRoom) //we've finished the game!
 				{
-					response = rm.currentRoom.longDesc + "\n \n*** Thank you for playing! ***";
+					response = rm.currentRoom.longDesc + "\n \n*** Thank you for playing!";
 				}
 				else
 					AddLineToBuffer( rm.currentRoom.description);

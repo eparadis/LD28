@@ -88,8 +88,23 @@ public class RoomManager : MonoBehaviour {
 	public Room currentRoom;
 	public Room lastRoom;
 
+	public void PopulateRooms()
+	{
+		rooms = new List<Room>();
+
+		rooms.AddRange( PopulateIntro() );
+		int endindex = rooms.Count - 1;
+		rooms.AddRange ( PopulateTunnel());
+		ConnectToEast( rooms[endindex], rooms[endindex+1]);
+		endindex = rooms.Count - 1;
+
+		currentRoom = rooms[0];
+		lastRoom = rooms[ endindex];
+
+	}
+
 	// just some statically defined room data
-	public void PopulateTestRooms()
+	List<Room> PopulateTestRooms()
 	{
 		Room first = new Room( "You are in the entrance of a tunnel", "Vines have nearly overgrown the entrance to a tunnel.  The harsh sun overhead prevents you from seeing more than a few feet inside.");
 		Room second = new Room( "You are in the depths of a tunnel", "The air feels damp and smells musty.  You get the feeling that no living thing has been this way in many years.");
@@ -121,14 +136,115 @@ public class RoomManager : MonoBehaviour {
 
 		GetComponent<MobManager>().MoveMobToRoom( "spooky ghost", fifth);	// put a ghost in there with that ring!
 
-		rooms = new List<Room>();
-		rooms.Add (first);
-		rooms.Add (second);
-		rooms.Add (third);
-		rooms.Add (fourth);
-		rooms.Add (fifth);
+		List<Room> testrooms = new List<Room>();
+		testrooms.Add (first);
+		testrooms.Add (second);
+		testrooms.Add (third);
+		testrooms.Add (fourth);
+		testrooms.Add (fifth);
 
 		currentRoom = first;
 		lastRoom = third;
+		return testrooms;
+	}
+
+	List<Room> PopulateIntro()
+	{
+		Room startroom = new Room( "You begin your quest standing outside a hermit's hut.  Perhaps you should 'look' around.", 
+		                          "The Hermit Stan's shack is just south of here.  You hear the sound of rushing water nearby. A path heads east.");
+		Room waterfall = new Room( "A small clearing at the base of a tall waterfall.",
+		                          "The waterfall has created a large pool of water down below where you stand.  The rocks here are slippery due to the spray.");
+		Room hermithut = new Room( "The abode of Stan the Hermit.  Stan sits outside on a stump.",
+		                          "As you admire Stan's shack, he starts to speak. \"You must travel east to find the artifact you seek! To the east! Always... to the east.\"  He trails off, with a distant look in his eye. He doesn't seem to have anything else to say.  Perhaps you can find 'help' another way.");
+		Room path = new Room("The path continues eastwards.",
+		                     "This is a very nice path, if I do say so myself.");
+
+		ConnectToEast(startroom, path);
+		ConnectToNorth(startroom, waterfall);
+		ConnectToSouth(startroom, hermithut);
+
+		List<Room> intro = new List<Room>();
+		intro.Add(startroom);	// by convention, the first room in the list is where we connect these little sub levels
+		intro.Add (waterfall);
+		intro.Add (hermithut);
+		intro.Add (path);	// by convention, the last room in the list is the final room or where it connects to the next sub level
+
+		return intro;
+	}
+
+	List<Room> PopulateTunnel()
+	{
+		Room redkey = new Room("You are at the entrance of an ornately carved tunnel.",
+		                       "Traces of paint can still be seen on the weathered stone.  Long in the past, this tunnel would have been very brightly colored.");
+		Room bluekey = new Room("A dimly lit tunnel",
+		                        "The carvings continue into the depths of the tunnel.");
+		Room yellowkey = new Room("A dimly lit tunnel",
+		                          "The carvings in this portion of the tunnel seem to have a sun motif.");
+		PuzzleRoom reddoor = new PuzzleRoom("A large door dominates this area of the tunnel.",
+		                                    "The door extends to the ceiling of the tunnel and is very solidly constructed.  The paint is long faded, but the carvings suggest a pattern of flames.",
+		                                    "red key");
+		PuzzleRoom bluedoor = new PuzzleRoom("You come across another door.",
+		                                     "After a dozen or so feet further down the tunnel, your path is blocked by another large door.  The patterns remind you of fish swimming in a river.",
+		                                     "blue key");
+		PuzzleRoom yellowdoor = new PuzzleRoom("A third large door fills the tunnel.",
+		                                       "You walk for a few minutes until you come to a large double door.  A huge icon of a rising sun extends across both doors.",
+		                                       "yellow key");
+		Room path = new Room("You squint as you step into the sunlight beyond the door.",
+		                     "After your eyes adjust to the bright light, you realize you now stand in a long narrow valley.  The path ahead of you is laid with stones, but they are very overgrown.  No human has traveled this path in many ages.");
+
+		// connect rooms
+		ConnectToEast(redkey, bluekey);
+		ConnectToEast(bluekey, yellowkey);
+		ConnectToEast(yellowkey, reddoor);
+
+		HiddenToEast(reddoor, bluedoor);
+		HiddenToEast(bluedoor, yellowdoor);
+		HiddenToEast(yellowdoor, path);
+
+		// add items
+		redkey.items.Add ("red key");
+		bluekey.items.Add ("blue key");
+		yellowkey.hiddenItems.Add( "yellow key");
+
+		List<Room> tunnel = new List<Room>();
+		tunnel.Add (redkey);
+		tunnel.Add (bluekey);
+		tunnel.Add (yellowkey);
+		tunnel.Add (reddoor);
+		tunnel.Add (bluedoor);
+		tunnel.Add (yellowdoor);
+		tunnel.Add (path);
+
+		return tunnel;
+	}
+
+	void HiddenToEast( PuzzleRoom first, Room second)
+	{
+		first.hiddenExits.Add ("east", second);
+		second.exits.Add ("west", first);
+	}
+
+	void ConnectToEast( Room first, Room second)
+	{
+		first.exits.Add ("east", second);
+		second.exits.Add ("west", first);
+	}
+
+	void ConnectToWest( Room first, Room second)
+	{
+		first.exits.Add ("west", second);
+		second.exits.Add ("east", first);
+	}
+
+	void ConnectToNorth( Room first, Room second)
+	{
+		first.exits.Add ("north", second);
+		second.exits.Add ("south", first);
+	}
+
+	void ConnectToSouth( Room first, Room second)
+	{
+		first.exits.Add ("south", second);
+		second.exits.Add ("north", first);
 	}
 }
