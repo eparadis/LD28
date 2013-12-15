@@ -43,10 +43,11 @@ public class Console : MonoBehaviour {
 					inputText.text = inputText.text.Substring(0, inputText.text.Length - 1);
 			} else {
 				if (c == "\n"[0] || c == "\r"[0]) // user has hit <return> or similar
-				{
-					ParseCommand(inputText.text);
-					mm.MoveMobs();
+				{	
 					ReportMobStatus();
+					ParseCommand(inputText.text);
+					mm.MobActions();
+
 					inputText.text = "_";
 					clearCursor = true;
 				}
@@ -57,9 +58,9 @@ public class Console : MonoBehaviour {
 	}
 	
 	// return a string with some of the spaces replaced with newlines such that no line is longer than columns
-	string WordWrap( string orig)
+/*	string WordWrap( string orig)
 	{
-		int columns = 40; // we could use information from the font guiText is using and Screen.width to determine the ACTUAL number of columns
+		int columns = Screen.width / 14; // the default width of the font is 14px
 
 		// we might not need to do anything
 		if( orig.Length <= columns )
@@ -88,12 +89,12 @@ public class Console : MonoBehaviour {
 		}
 
 		return new string(arr);
-	}
+	}*/
 
 	// from psuedocode on wikipedia 'word wrap'
 	string BetterWordWrap( string orig)
 	{
-		int columns = 40;
+		int columns = Screen.width / 14;
 		char[] orig_arr = orig.ToCharArray();
 		int index = 0;
 
