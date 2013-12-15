@@ -119,6 +119,8 @@ public class RoomManager : MonoBehaviour {
 		fifth.exits.Add ("west", fourth);
 		fifth.hiddenItems.Add ("diamond ring");
 
+		GetComponent<MobManager>().MoveMobToRoom( "spooky ghost", fifth);	// put a ghost in there with that ring!
+
 		rooms = new List<Room>();
 		rooms.Add (first);
 		rooms.Add (second);

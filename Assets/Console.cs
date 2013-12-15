@@ -18,11 +18,14 @@ public class Console : MonoBehaviour {
 		AddLineToBuffer("'You Only Have One'");
 		AddLineToBuffer("LD24 Entry, (c) 2013 Ed Paradis");
 		inputText.text = "_";
+
 		rm = GetComponent<RoomManager>();
+		mm = GetComponent<MobManager>();
+		im = GetComponent<InventoryManager>();
+
+		mm.PopulateTestMobs();	// populate mobs first, because the test rooms look for them to stick them in the right rooms ...
 		rm.PopulateTestRooms();
 		AddLineToBuffer(rm.currentRoom.description);
-		im = GetComponent<InventoryManager>();
-		mm = GetComponent<MobManager>();
 
 		//AddLineToBuffer("123456789 123456789 123456789 1234567890");
 		//AddLineToBuffer("This is a very long line that should be wrapped several times and it'll be interesting to see how it works. Hopefully it works very well and there are no issues with various punctuation and other elements.");
