@@ -176,6 +176,31 @@ public class Console : MonoBehaviour {
 			} else {
 				response = "There is no " + attemptedItem + " in this room.";
 			}
+		} else if( firstWord == "use")
+		{
+			string attemptedItem = inp.Substring( firstWord.Length + 1);
+
+			// make sure we're carrying what the user asked to use (or i guess as a nicety we could also allow for 'use'ing items on the floor, since it'd just be a floor juggle)
+			if( false || rm.currentRoom.items.Contains(attemptedItem) )
+			{
+				// then make sure that this item is whats supposed to be used in this room!
+				if( rm.currentRoom is PuzzleRoom)
+				{
+					PuzzleRoom pr = rm.currentRoom as PuzzleRoom;
+					if( pr.keyItem == attemptedItem)
+					{
+						// TODO remove attempted item from inventory if its there
+						pr.items.Remove(attemptedItem);	// the keyItems can only be used once, so poof it into dust
+						string unlockResults = pr.UnlockRoom();	// unlock the room
+						response = "The " + attemptedItem + " disappears!  But new exits appear...\n" + unlockResults; // report what happened
+					} else 
+						response = "The " + attemptedItem + " doesn't seem to do anything...";
+				} else {
+					response = "The " + attemptedItem + " doesn't seem to do anything...";
+				}
+			} else {
+				response = "You're not carrying a " + attemptedItem + ", and you don't see it in this room.";
+			}
 		} else {
 			response = "What?";
 		}

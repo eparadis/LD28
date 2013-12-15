@@ -40,6 +40,48 @@ public class Room {
 	}
 };
 
+public class PuzzleRoom : Room
+{
+	public bool requiresKey;
+	public string keyItem;
+	public Dictionary<string,Room> hiddenExits;
+	public PuzzleRoom( string desc, string ldesc, string key)
+		: base (desc, ldesc)
+	{
+		keyItem = key;
+		hiddenExits = new Dictionary<string,Room>();
+	}
+	public string UnlockRoom() // move hidden exits to normal exits
+	{
+		foreach( KeyValuePair<string,Room> kvp in hiddenExits)
+		{
+			exits[kvp.Key] = kvp.Value;
+		}
+		if( hiddenExits.Keys.Count == 0 )
+			return "Nothing happened.";
+		else if( hiddenExits.Keys.Count == 1 )
+		{
+			string resp = "A hidden exit opened: ";
+			foreach( string s in hiddenExits.Keys)
+			{
+				resp += s + " ";
+			}
+			hiddenExits.Clear (); // we don't need these any more
+			return resp;
+		}
+		else {
+			string resp = "Several hidden exits opened:";
+			foreach( string s in hiddenExits.Keys)
+			{
+				resp += " " + s;
+			}
+			hiddenExits.Clear (); // we don't need these any more
+			return resp;
+		}
+	}
+
+};
+
 public class RoomManager : MonoBehaviour {
 
 	public List<Room> rooms;
@@ -58,6 +100,8 @@ public class RoomManager : MonoBehaviour {
 		Room first = new Room( "You are in the entrance of a tunnel", "Vines have nearly overgrown the entrance to a tunnel.  The harsh sun overhead prevents you from seeing more than a few feet inside.");
 		Room second = new Room( "You are in the depths of a tunnel", "The air feels damp and smells musty.  You get the feeling that no living thing has been this way in many years.");
 		Room third = new Room( "You have escaped the tunnel!", "You step blinking into the bright sunlight of the surface.  You are free!");
+		PuzzleRoom fourth = new PuzzleRoom( "This room has a locked door.", "An enormous iron door emblazoned with a skull dominates this room.  There is a keyhole in the center of the door you can just reach.", "skull key");
+		Room fifth = new Room( "You are at a dead end.", "This appears to be an empty room, but you wonder why would it be behind a locked door.");
 
 		first.exits.Add ("north", second);
 		second.exits.Add ("south", first);
@@ -67,12 +111,23 @@ public class RoomManager : MonoBehaviour {
 
 		first.hiddenItems.Add ("magic sword");
 		second.items.Add ("heavy rock");
-		second.items.Add ("small rock");
+
+		fourth.exits.Add ("west", second);
+		second.exits.Add ("east", fourth);
+		fourth.items.Add ("skull key");
+		fourth.items.Add ("small rock");
+
+		fourth.keyItem = "skull key";
+		fourth.hiddenExits.Add ("east", fifth);
+		fifth.exits.Add ("west", fourth);
+		fifth.hiddenItems.Add ("diamond ring");
 
 		rooms = new List<Room>();
 		rooms.Add (first);
 		rooms.Add (second);
 		rooms.Add (third);
+		rooms.Add (fourth);
+		rooms.Add (fifth);
 
 		currentRoom = first;
 	}
