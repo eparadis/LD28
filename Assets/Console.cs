@@ -82,11 +82,17 @@ public class Console : MonoBehaviour {
 
 	void AddLineToBuffer( string t)
 	{
-		scrollBuffer.Enqueue( WordWrap(t) );
+		t = WordWrap(t);
+		foreach( string sp in t.Split ('\n'))
+		{
+			scrollBuffer.Enqueue( sp );
+		}
 
 		//check to see if we've got too much scroll back and drop a line
-		if( scrollBuffer.Count > maxBufferLength )
+		while( scrollBuffer.Count > maxBufferLength )
+		{
 			scrollBuffer.Dequeue();
+		}
 
 		string concat = "";
 		foreach( string s in scrollBuffer)
