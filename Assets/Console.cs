@@ -156,7 +156,12 @@ public class Console : MonoBehaviour {
 			{
 				// travel there and print what it looks like
 				rm.currentRoom = rm.currentRoom.exits[inp];
-				response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
+				if( rm.currentRoom == rm.lastRoom) //we've finished the game!
+				{
+					response = rm.currentRoom.longDesc + "\n \n*** Thank you for playing! ***";
+				}
+				else
+					response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
 			} else {
 				response = "You cannot travel that direction from here!";
 			}
