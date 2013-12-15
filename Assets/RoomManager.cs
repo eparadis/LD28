@@ -86,12 +86,7 @@ public class RoomManager : MonoBehaviour {
 
 	public List<Room> rooms;
 	public Room currentRoom;
-
-
-
-	// Use this for initialization
-	void Start () {
-	}
+	public Room lastRoom;
 
 	// just some statically defined room data
 	public void PopulateTestRooms()
@@ -101,12 +96,16 @@ public class RoomManager : MonoBehaviour {
 		Room third = new Room( "You have escaped the tunnel!", "You step blinking into the bright sunlight of the surface.  You are free!");
 		PuzzleRoom fourth = new PuzzleRoom( "This room has a locked door.", "An enormous iron door emblazoned with a skull dominates this room.  There is a keyhole in the center of the door you can just reach.", "skull key");
 		Room fifth = new Room( "You are at a dead end.", "This appears to be an empty room, but you wonder why would it be behind a locked door.");
+		PuzzleRoom sixth = new PuzzleRoom( "This room has a strange pedistal in the center.", "An ornate pedistal rises from the center of the room.  A single ray of light from somewhere in the ceiling shines onto the pedistal, illuminating a small bowl at the top.", "diamond ring");
 
 		first.exits.Add ("north", second);
 		second.exits.Add ("south", first);
 
-		second.exits.Add ("north", third);
-		third.exits.Add ("south", second);
+		second.exits.Add ("north", sixth);
+		sixth.exits.Add ("south", second);
+
+		third.exits.Add ("east", sixth);
+		sixth.hiddenExits.Add ("west", third);
 
 		first.hiddenItems.Add ("magic sword");
 		second.items.Add ("heavy rock");
@@ -116,7 +115,6 @@ public class RoomManager : MonoBehaviour {
 		fourth.items.Add ("skull key");
 		fourth.items.Add ("small rock");
 
-		fourth.keyItem = "skull key";
 		fourth.hiddenExits.Add ("east", fifth);
 		fifth.exits.Add ("west", fourth);
 		fifth.hiddenItems.Add ("diamond ring");
@@ -129,5 +127,6 @@ public class RoomManager : MonoBehaviour {
 		rooms.Add (fifth);
 
 		currentRoom = first;
+		lastRoom = third;
 	}
 }
