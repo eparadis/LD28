@@ -10,6 +10,7 @@ public class Console : MonoBehaviour {
 	bool clearCursor = true;
 	RoomManager rm;
 	InventoryManager im;
+	MobManager mm;
 
 	// Use this for initialization
 	void Start () {
@@ -21,6 +22,7 @@ public class Console : MonoBehaviour {
 		rm.PopulateTestRooms();
 		AddLineToBuffer(rm.currentRoom.description);
 		im = GetComponent<InventoryManager>();
+		mm = GetComponent<MobManager>();
 
 		//AddLineToBuffer("123456789 123456789 123456789 1234567890");
 		//AddLineToBuffer("This is a very long line that should be wrapped several times and it'll be interesting to see how it works. Hopefully it works very well and there are no issues with various punctuation and other elements.");
@@ -43,6 +45,8 @@ public class Console : MonoBehaviour {
 				if (c == "\n"[0] || c == "\r"[0]) // user has hit <return> or similar
 				{
 					ParseCommand(inputText.text);
+					mm.MoveMobs();
+					ReportMobStatus();
 					inputText.text = "_";
 					clearCursor = true;
 				}
@@ -245,6 +249,21 @@ public class Console : MonoBehaviour {
 		AddLineToBuffer( "> " + inp);
 		// then add our response
 		AddLineToBuffer(response);
+	}
+
+	void ReportMobStatus()
+	{
+		// first check if any mobs are in the adjacent rooms
+		if(mm.AnyMobsAdjacent( rm.currentRoom))
+		{
+			AddLineToBuffer("You hear a inhuman moaning nearby...");
+		}
+		// then check if any mobs are in the current room!
+		if(mm.ContainsMob( rm.currentRoom))
+		{
+			Mob mob = mm.GetMobByRoom( rm.currentRoom);
+			AddLineToBuffer("There is a " + mob.name + " in this room!");
+		}
 	}
 
 }
