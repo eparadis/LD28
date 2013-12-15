@@ -9,6 +9,7 @@ public class Console : MonoBehaviour {
 	Queue<string> scrollBuffer;
 	bool clearCursor = true;
 	RoomManager rm;
+	InventoryManager im;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +18,9 @@ public class Console : MonoBehaviour {
 		AddLineToBuffer("LD24 Entry, (c) 2013 Ed Paradis");
 		inputText.text = "_";
 		rm = GetComponent<RoomManager>();
+		rm.PopulateTestRooms();
 		AddLineToBuffer(rm.currentRoom.description);
+		im = GetComponent<InventoryManager>();
 
 		//AddLineToBuffer("123456789 123456789 123456789 1234567890");
 		//AddLineToBuffer("This is a very long line that should be wrapped several times and it'll be interesting to see how it works. Hopefully it works very well and there are no issues with various punctuation and other elements.");
@@ -172,7 +175,12 @@ public class Console : MonoBehaviour {
 			if( rm.currentRoom.items.Contains(attemptedItem))
 			{
 				rm.currentRoom.items.Remove(attemptedItem);
-				response = "You picked up the " + attemptedItem + ", but it immediately turned to dust because there is no inventory system yet!";
+				if(im.CanCarry(attemptedItem))
+				{
+					response = "You picked up the " + attemptedItem;
+					im.Carry(attemptedItem);
+				} else 
+					response = "You cannot carry the " + attemptedItem + ". You need to drop something first.";
 			} else {
 				response = "There is no " + attemptedItem + " in this room.";
 			}
@@ -181,7 +189,7 @@ public class Console : MonoBehaviour {
 			string attemptedItem = inp.Substring( firstWord.Length + 1);
 
 			// make sure we're carrying what the user asked to use (or i guess as a nicety we could also allow for 'use'ing items on the floor, since it'd just be a floor juggle)
-			if( false || rm.currentRoom.items.Contains(attemptedItem) )
+			if( im.Carrying(attemptedItem) || rm.currentRoom.items.Contains(attemptedItem) )
 			{
 				// then make sure that this item is whats supposed to be used in this room!
 				if( rm.currentRoom is PuzzleRoom)
@@ -189,7 +197,7 @@ public class Console : MonoBehaviour {
 					PuzzleRoom pr = rm.currentRoom as PuzzleRoom;
 					if( pr.keyItem == attemptedItem)
 					{
-						// TODO remove attempted item from inventory if its there
+						im.Drop(attemptedItem); // remove attempted item from inventory if its there
 						pr.items.Remove(attemptedItem);	// the keyItems can only be used once, so poof it into dust
 						string unlockResults = pr.UnlockRoom();	// unlock the room
 						response = "The " + attemptedItem + " disappears!  But new exits appear...\n" + unlockResults; // report what happened
@@ -201,6 +209,21 @@ public class Console : MonoBehaviour {
 			} else {
 				response = "You're not carrying a " + attemptedItem + ", and you don't see it in this room.";
 			}
+		} else if( firstWord == "drop")
+		{
+			string attemptedItem = inp.Substring( firstWord.Length + 1);
+			if( im.Carrying(attemptedItem) )
+			{
+				im.Drop(attemptedItem);
+				response = "You drop the " + attemptedItem + ".";
+			} else
+				response = "You are not carrying the " + attemptedItem + ".";
+		} else if( inp == "inv" || inp == "inventory")
+		{
+			response = "You are carrying: " + im.GetContents();
+		} else if( inp == "help")
+		{
+			response = "HELP: Move to other room using directions like 'north', 'east', 'south', or 'west'.\nHELP: You can 'get' and 'use' items on the ground or 'drop' those you carry.\n";
 		} else {
 			response = "What?";
 		}

@@ -91,11 +91,10 @@ public class RoomManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		PopulateTestRooms();
 	}
 
 	// just some statically defined room data
-	void PopulateTestRooms()
+	public void PopulateTestRooms()
 	{
 		Room first = new Room( "You are in the entrance of a tunnel", "Vines have nearly overgrown the entrance to a tunnel.  The harsh sun overhead prevents you from seeing more than a few feet inside.");
 		Room second = new Room( "You are in the depths of a tunnel", "The air feels damp and smells musty.  You get the feeling that no living thing has been this way in many years.");
