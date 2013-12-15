@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Console : MonoBehaviour {
 
 	public GUIText inputText;
-	public int maxBufferLength;
 	Queue<string> scrollBuffer;
 	bool clearCursor = true;
 	RoomManager rm;
@@ -106,6 +105,7 @@ public class Console : MonoBehaviour {
 		}
 
 		//check to see if we've got too much scroll back and drop a line
+		int maxBufferLength = (Screen.height / 18) - 2;  // 18px vertical space for each line with C64 font. leave 2 lines at the bottom for prompt
 		while( scrollBuffer.Count > maxBufferLength )
 		{
 			scrollBuffer.Dequeue();
