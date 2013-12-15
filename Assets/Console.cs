@@ -18,6 +18,9 @@ public class Console : MonoBehaviour {
 		inputText.text = "_";
 		rm = GetComponent<RoomManager>();
 		AddLineToBuffer(rm.currentRoom.description);
+
+		//AddLineToBuffer("123456789 123456789 123456789 1234567890");
+		//AddLineToBuffer("This is a very long line that should be wrapped several times and it'll be interesting to see how it works. Hopefully it works very well and there are no issues with various punctuation and other elements.");
 	}
 	
 	void Update() {
@@ -55,7 +58,7 @@ public class Console : MonoBehaviour {
 		if( orig.Length <= columns )
 			return orig;
 
-		int nextSpace = 0, prevSpace = 0;
+		int prevSpace = 0;
 		int lineRemaining = columns;
 		char[] arr = orig.ToCharArray();
 		for( int i=0; i<arr.Length; i+=1)
@@ -80,9 +83,37 @@ public class Console : MonoBehaviour {
 		return new string(arr);
 	}
 
+	// from psuedocode on wikipedia 'word wrap'
+	string BetterWordWrap( string orig)
+	{
+		int columns = 40;
+		char[] orig_arr = orig.ToCharArray();
+		int index = 0;
+
+		//SpaceLeft := LineWidth
+		int spaceLeft = columns;
+		//for each Word in Text
+		foreach( string word in orig.Split(' ') )
+		{
+			//if (Width(Word) + SpaceWidth) > SpaceLeft
+			if( word.Length + 1 > spaceLeft)
+			{
+				//insert line break before Word in Text
+				orig_arr[index-1] = '\n';
+				//SpaceLeft := LineWidth - Width(Word)
+				spaceLeft = columns - word.Length;
+			} else {
+				//SpaceLeft := SpaceLeft - (Width(Word) + SpaceWidth)
+				spaceLeft = spaceLeft - (word.Length + 1);
+			}
+			index += word.Length + 1; // the length of the word plus the whitespace (newline or space)
+		}
+		return new string( orig_arr);
+	}
+
 	void AddLineToBuffer( string t)
 	{
-		t = WordWrap(t);
+		t = BetterWordWrap(t);
 		foreach( string sp in t.Split ('\n'))
 		{
 			scrollBuffer.Enqueue( sp );
@@ -123,8 +154,8 @@ public class Console : MonoBehaviour {
 			}
 		} else if( inp == "search")
 		{
-			if(true)//Random.value < 0.5f) // 50%
-			{
+			//if(Random.value < 0.5f) // 50% chance of finding hidden stuff
+			//{
 				if( rm.currentRoom.hiddenItems.Count > 0)
 				{
 					string itemFound = rm.currentRoom.hiddenItems[0];
@@ -133,8 +164,8 @@ public class Console : MonoBehaviour {
 					rm.currentRoom.hiddenItems.Remove(itemFound);
 				} else
 					response = "There doesn't seem to be anything else hidden in this room.";
-			} else
-				response = "You didn't find anything this time.";
+			//} else
+			//	response = "You didn't find anything this time.";
 		} else if( firstWord == "get")
 		{
 			string attemptedItem = inp.Substring( firstWord.Length + 1);

@@ -67,6 +67,7 @@ public class RoomManager : MonoBehaviour {
 
 		first.hiddenItems.Add ("magic sword");
 		second.items.Add ("heavy rock");
+		second.items.Add ("small rock");
 
 		rooms = new List<Room>();
 		rooms.Add (first);
