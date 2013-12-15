@@ -45,10 +45,44 @@ public class Console : MonoBehaviour {
 			}
 		}
 	}
+	
+	// return a string with some of the spaces replaced with newlines such that no line is longer than columns
+	string WordWrap( string orig)
+	{
+		int columns = 40; // we could use information from the font guiText is using and Screen.width to determine the ACTUAL number of columns
+
+		// we might not need to do anything
+		if( orig.Length <= columns )
+			return orig;
+
+		int nextSpace = 0, prevSpace = 0;
+		int lineRemaining = columns;
+		char[] arr = orig.ToCharArray();
+		for( int i=0; i<arr.Length; i+=1)
+		{
+			// if we find a space, and theres enough of the original line left to require more wrapping
+			if(arr[i] == ' ' && (arr.Length - i ) > columns)
+			{
+				if(lineRemaining <= 0)
+				{
+					arr[prevSpace] = '\n';
+					lineRemaining = columns - (i-prevSpace);
+					prevSpace = i;
+				} else
+				{
+					prevSpace = i;
+				}
+			}
+
+			lineRemaining -= 1;
+		}
+
+		return new string(arr);
+	}
 
 	void AddLineToBuffer( string t)
 	{
-		scrollBuffer.Enqueue(t);
+		scrollBuffer.Enqueue( WordWrap(t) );
 
 		//check to see if we've got too much scroll back and drop a line
 		if( scrollBuffer.Count > maxBufferLength )
