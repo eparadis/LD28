@@ -47,9 +47,9 @@ public class Console : MonoBehaviour {
 			} else {
 				if (c == "\n"[0] || c == "\r"[0]) // user has hit <return> or similar
 				{	
-					ReportMobStatus();
-					ParseCommand(inputText.text);
-					mm.MobActions();
+					ParseCommand(inputText.text); // prints out a "> blah blah" record of the entered command and appropriate response lines
+					ReportMobStatus(); // prints out "you hear moaning!" and/or "there is a zombie in this room!"
+					mm.MobActions(); // mobs move or do whatever they do (silent)
 
 					inputText.text = "_";
 					clearCursor = true;
@@ -59,45 +59,17 @@ public class Console : MonoBehaviour {
 			}
 		}
 	}
-	
-	// return a string with some of the spaces replaced with newlines such that no line is longer than columns
-/*	string WordWrap( string orig)
-	{
-		int columns = Screen.width / 14; // the default width of the font is 14px
-
-		// we might not need to do anything
-		if( orig.Length <= columns )
-			return orig;
-
-		int prevSpace = 0;
-		int lineRemaining = columns;
-		char[] arr = orig.ToCharArray();
-		for( int i=0; i<arr.Length; i+=1)
-		{
-			// if we find a space, and theres enough of the original line left to require more wrapping
-			if(arr[i] == ' ' && (arr.Length - i ) > columns)
-			{
-				if(lineRemaining <= 0)
-				{
-					arr[prevSpace] = '\n';
-					lineRemaining = columns - (i-prevSpace);
-					prevSpace = i;
-				} else
-				{
-					prevSpace = i;
-				}
-			}
-
-			lineRemaining -= 1;
-		}
-
-		return new string(arr);
-	}*/
 
 	// from psuedocode on wikipedia 'word wrap'
 	string BetterWordWrap( string orig)
 	{
 		int columns = Screen.width / 14;
+		//Debug.Log( columns + " " + orig.Length);
+
+		// ok first off; if we dont need to do anything, dont do it
+		if(orig.Length < columns)
+			return orig;
+
 		char[] orig_arr = orig.ToCharArray();
 		int index = 0;
 
@@ -124,6 +96,9 @@ public class Console : MonoBehaviour {
 
 	void AddLineToBuffer( string t)
 	{
+		if( t == "")	// ignore 0-length lines
+			return;	
+
 		t = BetterWordWrap(t);
 		foreach( string sp in t.Split ('\n'))
 		{
@@ -146,7 +121,7 @@ public class Console : MonoBehaviour {
 
 	void ParseCommand( string inp)
 	{
-		string response;
+		string response = "";
 		string firstWord = inp.Split(' ')[0];
 		string attemptedItem;
 		if( inp.Length > firstWord.Length)
@@ -154,9 +129,15 @@ public class Console : MonoBehaviour {
 		else
 			attemptedItem = "";
 
+		// add what the user entered as a 'command'
+		AddLineToBuffer( "> " + inp);
+
 		if( inp == "look")
 		{
-			response = rm.currentRoom.longDesc + "\n" + rm.currentRoom.GetExitOptions() + "\n" + rm.currentRoom.GetItemsInRoom();
+			response = ""; // don't do a response later
+			AddLineToBuffer(rm.currentRoom.longDesc);
+			AddLineToBuffer(rm.currentRoom.GetExitOptions());
+			AddLineToBuffer(rm.currentRoom.GetItemsInRoom());
 		} else if( inp == "north" || inp == "south" || inp == "east" || inp == "west" || inp == "up" || inp == "down")
 		{
 			// user is trying to move rooms; first check if its a valid exit for the current room
@@ -169,7 +150,8 @@ public class Console : MonoBehaviour {
 					response = rm.currentRoom.longDesc + "\n \n*** Thank you for playing! ***";
 				}
 				else
-					response = rm.currentRoom.description + "\n" + rm.currentRoom.GetExitOptions();
+					AddLineToBuffer( rm.currentRoom.description);
+					AddLineToBuffer( rm.currentRoom.GetExitOptions());
 			} else {
 				response = "You cannot travel that direction from here!";
 			}
@@ -244,15 +226,14 @@ public class Console : MonoBehaviour {
 			response = "You are carrying: " + im.GetContents();
 		} else if( inp == "help")
 		{
-			response = "HELP: Move to other room using directions like 'north', 'east', 'south', or 'west'.\nHELP: You can 'get' and 'use' items on the ground or 'drop' those you carry.\n";
+			response = "HELP: Move to other room using directions like 'north', 'east', 'south', or 'west'.\nHELP: You can 'get' and 'use' items on the ground or 'drop' those you carry.\nHELP: Don't forget to 'search' for clues!";
 		} else {
 			response = "What?";
 		}
 
-		// add what the user entered as a 'command'
-		AddLineToBuffer( "> " + inp);
-		// then add our response
-		AddLineToBuffer(response);
+		// if we set a simple, single line response, print it out
+		if( response != "")
+			AddLineToBuffer(response);
 	}
 
 	void ReportMobStatus()
