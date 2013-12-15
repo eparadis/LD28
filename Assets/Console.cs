@@ -140,6 +140,11 @@ public class Console : MonoBehaviour {
 	{
 		string response;
 		string firstWord = inp.Split(' ')[0];
+		string attemptedItem;
+		if( inp.Length > firstWord.Length)
+			attemptedItem = inp.Substring( firstWord.Length + 1);
+		else
+			attemptedItem = "";
 
 		if( inp == "look")
 		{
@@ -171,8 +176,9 @@ public class Console : MonoBehaviour {
 			//	response = "You didn't find anything this time.";
 		} else if( firstWord == "get")
 		{
-			string attemptedItem = inp.Substring( firstWord.Length + 1);
-			if( rm.currentRoom.items.Contains(attemptedItem))
+			if( attemptedItem == "")
+				response = "You must specify what to get.";
+			else if( rm.currentRoom.items.Contains(attemptedItem))
 			{
 				rm.currentRoom.items.Remove(attemptedItem);
 				if(im.CanCarry(attemptedItem))
@@ -186,10 +192,10 @@ public class Console : MonoBehaviour {
 			}
 		} else if( firstWord == "use")
 		{
-			string attemptedItem = inp.Substring( firstWord.Length + 1);
-
+			if( attemptedItem == "")
+				response = "You must specify what to use.";
 			// make sure we're carrying what the user asked to use (or i guess as a nicety we could also allow for 'use'ing items on the floor, since it'd just be a floor juggle)
-			if( im.Carrying(attemptedItem) || rm.currentRoom.items.Contains(attemptedItem) )
+			else if( im.Carrying(attemptedItem) || rm.currentRoom.items.Contains(attemptedItem) )
 			{
 				// then make sure that this item is whats supposed to be used in this room!
 				if( rm.currentRoom is PuzzleRoom)
@@ -211,11 +217,13 @@ public class Console : MonoBehaviour {
 			}
 		} else if( firstWord == "drop")
 		{
-			string attemptedItem = inp.Substring( firstWord.Length + 1);
-			if( im.Carrying(attemptedItem) )
+			if( attemptedItem == "" )
+				response = "You must specify what to drop.";
+			else if( im.Carrying(attemptedItem) )
 			{
 				im.Drop(attemptedItem);
 				response = "You drop the " + attemptedItem + ".";
+				rm.currentRoom.items.Add(attemptedItem);
 			} else
 				response = "You are not carrying the " + attemptedItem + ".";
 		} else if( inp == "inv" || inp == "inventory")
