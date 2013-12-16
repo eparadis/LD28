@@ -98,6 +98,25 @@ public class RoomManager : MonoBehaviour {
 		ConnectToEast( rooms[endindex], rooms[endindex+1]);
 		endindex = rooms.Count - 1;
 
+		rooms.AddRange( PopulateValley() );
+		ConnectToEast( rooms[endindex], rooms[endindex+1]);
+		endindex = rooms.Count - 1;
+		int valleyend = endindex;
+
+		rooms.Add ( new Room("The path is blocked off here with roughly hewn logs.",
+		                     "The massive logs are stacked up higher than you can see past.  In the center, a small sign is posted. \"Labyrinth closed for repairs. Sorry.\"")
+		           );
+		ConnectToNorth(rooms[valleyend], rooms[endindex+1]);
+		endindex = rooms.Count - 1;
+
+		rooms.AddRange( PopulateForest() );
+		ConnectToSouth( rooms[valleyend], rooms[endindex + 1]);
+		endindex = rooms.Count - 1;
+
+		rooms.AddRange ( PopulateCave() );
+		ConnectToEast( rooms[valleyend], rooms[endindex + 1]);
+		endindex = rooms.Count - 1;
+
 		currentRoom = rooms[0];
 		lastRoom = rooms[ endindex];
 
@@ -218,6 +237,104 @@ public class RoomManager : MonoBehaviour {
 		return tunnel;
 	}
 
+	List<Room> PopulateValley()
+	{
+		Room westvalley = new Room("The west edge of the valley.", 
+		                           "Steep mountains extend to the north and south, making progress impossible.  The overgrown path continues east.");
+		Room centralvalley = new Room("The path splits into different directions here.",
+		                              "The main stone path extends to the east, but you notice a smaller stone path leading south and a dirt path leading north.");
+
+		ConnectToEast(westvalley, centralvalley);
+
+		List<Room> valley = new List<Room>();
+		valley.Add (westvalley);
+		valley.Add(centralvalley);
+		return valley;
+	}
+
+	List<Room> PopulateForest()
+	{
+		Room f1 = new Room( "The entrance to a dark forest",
+		                   "The path lead into a dark forest.  You notice that the stones in the path are carved into small skulls.");
+		Room f2 = new Room("You are in a dark forest.",
+		                   "You seem to have lost the path.  The forest grows too thick to continue in this direction.");
+		Room f3 = new Room("You are in a dark forest.",
+		                   "Despite being a clear bright day, the sun is barely visible through the canopy of the forest.  The small stone skulls of the path stare up at you.");
+		Room f4 = new Room("You are in a dark forest.",
+		                   "The path appears to split into two directions here.  Curiously, the path to west seems to be made of a different type of stone.");
+		Room f5 = new Room("You are in a dark forest.",
+		                   "The stone path is very overgrown here.");
+		Room f6 = new Room("You are in a dark forest.",
+		                   "You can't seem to penetrate any further along the path.");
+		Room f7 = new Room("You are in a small clearing.",
+		                   "Just ahead you can see broken stones in piles.  A somewhat disappointed ghost floats in the center of the path.  \"Oh, hello.  There was supposed to be a big graveyard with ghosts and puzzles and stuff ahead, but I ran out of time trying to set it up.  So maybe just search around here at the entrance.  It's seriously a wreck in there.\"");
+
+		f7.hiddenItems.Add ("skull key");
+
+		ConnectToSouth(f1, f3);
+		ConnectToWest(f1, f2);
+		ConnectToWest(f3, f4);
+		ConnectToWest(f4, f5);
+		ConnectToNorth(f5, f6);
+		ConnectToSouth(f4, f7);
+
+		List<Room> forest = new List<Room>();
+		forest.Add (f1);
+		forest.Add (f2);
+		forest.Add (f3);
+		forest.Add (f4);
+		forest.Add (f5);
+		forest.Add (f6);
+		forest.Add (f7); // this is the 'exit' room
+
+		return forest;
+	}
+
+	List<Room> PopulateCave()
+	{
+		Room entrance = new Room("The entrance to a large cave.",
+		                         "In the center of a steep wall of stone, an archway marks the entrance to some sort of cave.");
+		Room c1 = new Room("You creep along a dark cave.",
+		                   "The air is damp and musty.  You hear the dripping water in the distance.");
+		Room c2 = new Room("You creep along a dark cave.",
+		                   "You can make out two possible exits here, but is not clear which way to travel.");
+		Room c3 = new Room("You creep along a dark cave.",
+		                   "The floor is wet here.  Water seems to be dripping from the ceiling.");
+		PuzzleRoom c4 = new PuzzleRoom("You creep along a dark cave.",
+		                               "An enormous cast iron door in the shape of a skull dominates this room. There is a keyhole in the center of the door which you can just reach.",
+		                               "skull key");
+		Room c5 = new Room("You stumble into a large room.",
+		                   "You are surprised at the immensity of the room behind the skull door.  Piles of glittering treasure line the walls and rich tapestries hang from the ceiling.  Foreign treasures you have never before seen the likes of lay amongst the treasure.");
+		Room c6 = new Room("To the east of the large room sits a large throne.",
+		                   "A throne sits prominently amongst the riches.  You are the first in many generations to discover the secret of being able to hold more than one thing at a time.  You may now rightly accend the throne, as Grand High Bag Master The Exalted!");
+
+		ConnectToEast( entrance, c1);
+		ConnectToNorth( c1, c2);
+		ConnectToNorth( c2, c3);
+		ConnectToEast(c2, c4);
+		HiddenToEast(c4, c5);
+		ConnectToEast(c5, c6);
+
+		c5.items.Add ("purse");
+		c5.items.Add ("backpack");
+		c5.items.Add ("satchel");
+		c5.items.Add ("hobo bindle");
+		c5.items.Add ("messenger bag");
+		c5.items.Add ("bag of holding");
+
+		List<Room> cave = new List<Room>();
+		cave.Add (entrance);
+		cave.Add (c1);
+		cave.Add (c2);
+		cave.Add (c3);
+		cave.Add (c4);
+		cave.Add (c5);
+		cave.Add (c6); // the exit room of this zone AND the game
+		return cave;
+	}
+
+	#region utilfuncs
+
 	void HiddenToEast( PuzzleRoom first, Room second)
 	{
 		first.hiddenExits.Add ("east", second);
@@ -247,4 +364,6 @@ public class RoomManager : MonoBehaviour {
 		first.exits.Add ("south", second);
 		second.exits.Add ("north", first);
 	}
+
+	#endregion
 }

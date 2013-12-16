@@ -14,8 +14,8 @@ public class Console : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		scrollBuffer = new Queue<string>();
-		AddLineToBuffer("'You Only Have One'");
-		AddLineToBuffer("LD24 Entry, (c) 2013 Ed Paradis");
+		AddLineToBuffer("'You Only Have One Inventory Slot'");
+		AddLineToBuffer("LD28 Entry, (c) 2013 Ed Paradis");
 		inputText.text = "_";
 
 		rm = GetComponent<RoomManager>();
